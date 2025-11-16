@@ -505,10 +505,10 @@ function renderAuditRatio(data, container) {
         transform: `translate(${width / 2},${height / 2})`
     });
 
-    // Pie data
+    // Pie data - Purple from XP by Project graph for passed, Pink for failed
     const pieData = [
-        { label: 'Passed', value: data.passed, color: '#10b981' },
-        { label: 'Failed', value: data.failed, color: '#ef4444' }
+        { label: 'Passed', value: data.passed, color: '#6366f1' },
+        { label: 'Failed', value: data.failed, color: '#ec4899' }
     ];
 
     // Calculate angles
@@ -542,14 +542,17 @@ function renderAuditRatio(data, container) {
         });
         g.appendChild(path);
 
-        // Add label
+        // Add label - adjust text color based on background
         const labelAngle = (startAngle + endAngle) / 2;
         const labelRadius = radius * 0.7;
         const labelX = Math.cos(labelAngle) * labelRadius;
         const labelY = Math.sin(labelAngle) * labelRadius;
 
+        // Use white text for both colors (they're both dark enough)
+        const textColor = 'white';
+
         const label = createText(labelX, labelY, `${item.label}: ${item.value}`, '', 'middle');
-        label.setAttribute('fill', 'white');
+        label.setAttribute('fill', textColor);
         label.setAttribute('font-size', '14px');
         label.setAttribute('font-weight', 'bold');
         g.appendChild(label);
@@ -557,7 +560,7 @@ function renderAuditRatio(data, container) {
         // Add percentage
         const percentage = ((item.value / total) * 100).toFixed(1);
         const percentLabel = createText(labelX, labelY + 18, `${percentage}%`, '', 'middle');
-        percentLabel.setAttribute('fill', 'white');
+        percentLabel.setAttribute('fill', textColor);
         percentLabel.setAttribute('font-size', '12px');
         g.appendChild(percentLabel);
 
