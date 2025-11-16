@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="profile-container">
+        <header class="profile-header">
+            <div class="header-content">
+                <h1>My Profile</h1>
+                <button id="logoutBtn" class="btn btn-secondary">Logout</button>
+            </div>
+        </header>
+
+        <main class="profile-main">
+            <div id="loadingIndicator" class="loading-indicator">
+                <div class="spinner"></div>
+                <p>Loading your data...</p>
+            </div>
+
+            <div id="profileContent" style="display: none;">
+                <!-- User Information Section -->
+                <section class="info-section">
+                    <h2>User Information</h2>
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <div class="info-icon">👤</div>
+                            <div class="info-content">
+                                <h3>Login</h3>
+                                <p id="userLogin">-</p>
+                            </div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-icon">🆔</div>
+                            <div class="info-content">
+                                <h3>User ID</h3>
+                                <p id="userId">-</p>
+                            </div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-icon">⭐</div>
+                            <div class="info-content">
+                                <h3>Total XP</h3>
+                                <p id="totalXP">0</p>
+                            </div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-icon">📊</div>
+                            <div class="info-content">
+                                <h3>Audit Ratio</h3>
+                                <p id="auditRatio">-</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Completed Projects Section -->
+                <section class="projects-section">
+                    <h2>Completed Projects</h2>
+                    <div id="projectsList" class="projects-list">
+                        <!-- Projects will be loaded here -->
+                    </div>
+                </section>
+
+                <!-- Statistics Section -->
+                <section class="statistics-section">
+                    <h2>Statistics & Graphs</h2>
+                    
+                    <div class="graph-controls">
+                        <button class="btn btn-graph active" data-graph="xp-over-time">XP Over Time</button>
+                        <button class="btn btn-graph" data-graph="xp-by-project">XP by Project</button>
+                        <button class="btn btn-graph" data-graph="audit-ratio">Audit Ratio</button>
+                    </div>
+
+                    <div class="graph-container">
+                        <div id="graphArea" class="graph-area">
+                            <!-- SVG graphs will be rendered here -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div id="errorContent" class="error-content" style="display: none;">
+                <p>Failed to load profile data. Please try again.</p>
+                <button class="btn btn-primary" onclick="location.reload()">Retry</button>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/graphql.js"></script>
+    <script src="js/graphs.js"></script>
+    <script src="js/profile.js"></script>
+</body>
+</html>
+
