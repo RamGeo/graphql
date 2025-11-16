@@ -50,8 +50,8 @@ async function loadProfileData() {
         profileContent.style.display = 'none';
         errorContent.style.display = 'none';
 
-        // Load all data in parallel
-        const [userInfo, totalXP, xpOverTime, xpByProject, auditRatio, completedProjects] = await Promise.all([
+        // Load all data in parallel with error handling for individual queries
+        const results = await Promise.allSettled([
             getUserInfo(),
             getTotalXP(),
             getXPOverTime(),
@@ -59,6 +59,21 @@ async function loadProfileData() {
             getAuditRatio(),
             getCompletedProjects()
         ]);
+
+        // Extract results, using defaults for failed queries
+        const userInfo = results[0].status === 'fulfilled' ? results[0].value : null;
+        const totalXP = results[1].status === 'fulfilled' ? results[1].value : 0;
+        const xpOverTime = results[2].status === 'fulfilled' ? results[2].value : [];
+        const xpByProject = results[3].status === 'fulfilled' ? results[3].value : [];
+        const auditRatio = results[4].status === 'fulfilled' ? results[4].value : { passed: 0, failed: 0, ratio: 0, total: 0 };
+        const completedProjects = results[5].status === 'fulfilled' ? results[5].value : [];
+
+        // Log any failures
+        results.forEach((result, index) => {
+            if (result.status === 'rejected') {
+                console.warn(`Failed to load data item ${index}:`, result.reason);
+            }
+        });
 
         // Store graph data
         graphData.xpOverTime = xpOverTime;

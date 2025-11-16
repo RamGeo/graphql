@@ -15,13 +15,20 @@ async function signIn(username, password) {
     try {
         const credentials = encodeCredentials(username, password);
         
+        // Add timeout to fetch request
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+        
         const response = await fetch(CONFIG.SIGNIN_ENDPOINT, {
             method: 'POST',
             headers: {
                 'Authorization': `Basic ${credentials}`,
                 'Content-Type': 'application/json'
-            }
+            },
+            signal: controller.signal
         });
+
+        clearTimeout(timeoutId);
 
         // Log response for debugging
         console.log('Signin response status:', response.status);
@@ -91,10 +98,18 @@ async function signIn(username, password) {
         return token;
     } catch (error) {
         console.error('Sign in error:', error);
-        // Provide more helpful error messages
+        
+        // Handle specific error types
+        if (error.name === 'AbortError') {
+            throw new Error('Request timeout. Please check your connection and try again.');
+        }
         if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
             throw new Error('Network error: Could not connect to server. Check your internet connection and CORS settings.');
         }
+        if (error.message.includes('JSON')) {
+            throw new Error('Invalid response from server. Please try again.');
+        }
+        
         throw error;
     }
 }

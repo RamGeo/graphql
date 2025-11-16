@@ -7,14 +7,21 @@ async function executeQuery(query, variables = {}) {
     try {
         const headers = getAuthHeader();
         
+        // Add timeout to fetch request
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+        
         const response = await fetch(CONFIG.GRAPHQL_ENDPOINT, {
             method: 'POST',
             headers: headers,
             body: JSON.stringify({
                 query: query,
                 variables: variables
-            })
+            }),
+            signal: controller.signal
         });
+
+        clearTimeout(timeoutId);
 
         if (!response.ok) {
             if (response.status === 401) {
@@ -22,18 +29,38 @@ async function executeQuery(query, variables = {}) {
                 signOut();
                 throw new Error('Authentication expired. Please login again.');
             }
+            if (response.status === 403) {
+                throw new Error('Access forbidden. You may not have permission to access this data.');
+            }
+            if (response.status >= 500) {
+                throw new Error('Server error. Please try again later.');
+            }
             throw new Error(`GraphQL request failed: ${response.statusText}`);
         }
 
         const data = await response.json();
         
         if (data.errors) {
-            throw new Error(data.errors[0]?.message || 'GraphQL query error');
+            const errorMessage = data.errors[0]?.message || 'GraphQL query error';
+            console.error('GraphQL errors:', data.errors);
+            throw new Error(errorMessage);
         }
 
         return data.data;
     } catch (error) {
         console.error('GraphQL query error:', error);
+        
+        // Handle specific error types
+        if (error.name === 'AbortError') {
+            throw new Error('Request timeout. Please check your connection and try again.');
+        }
+        if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+            throw new Error('Network error: Could not connect to server. Check your internet connection.');
+        }
+        if (error.message.includes('JSON')) {
+            throw new Error('Invalid response from server. Please try again.');
+        }
+        
         throw error;
     }
 }
