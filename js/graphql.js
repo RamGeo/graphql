@@ -499,6 +499,8 @@ async function getCompletedProjects() {
                combined.includes('/piscine') ||
                combined.includes('check-in') ||
                combined.includes('checkin') ||
+               combined.includes('checkpoint') ||
+               combined.includes('/checkpoint') ||
                combined.includes('administration') ||
                combined.includes('toad');
     };
@@ -610,6 +612,8 @@ async function getCompletedProjects() {
                            combined.includes('/piscine') ||
                            combined.includes('check-in') ||
                            combined.includes('checkin') ||
+                           combined.includes('checkpoint') ||
+                           combined.includes('/checkpoint') ||
                            combined.includes('administration') ||
                            combined.includes('toad');
                 };
