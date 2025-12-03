@@ -7,11 +7,8 @@ WORKDIR /usr/share/nginx/html
 # Remove default nginx static assets
 RUN rm -rf ./*
 
-# Copy all project files to nginx html directory
-COPY index.html .
-COPY profile.html .
-COPY css/ ./css/
-COPY js/ ./js/
+# Copy all public files to nginx html directory
+COPY public/ .
 
 # Copy custom nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf

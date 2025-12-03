@@ -25,10 +25,10 @@ A modern, interactive profile page that displays your school information using G
 
 1. **Copy the example configuration:**
    ```bash
-   cp js/config.example.js js/config.js
+   cp public/js/config.example.js public/js/config.js
    ```
 
-2. **Edit `js/config.js`** and replace the placeholder values with your actual GraphQL API endpoints:
+2. **Edit `public/js/config.js`** and replace the placeholder values with your actual GraphQL API endpoints:
 
    ```javascript
    const CONFIG = {
@@ -48,12 +48,12 @@ A modern, interactive profile page that displays your school information using G
    - If your API supports CORS: Set `USE_PROXY: false` and use the `*_DIRECT` endpoints
    - If your API doesn't support CORS: Keep `USE_PROXY: true` (uses a CORS proxy)
 
-**Note:** The `js/config.js` file is gitignored, so your personal configuration won't be committed to the repository.
+**Note:** The `public/js/config.js` file is gitignored, so your personal configuration won't be committed to the repository.
 
 ### 2. Local Development
 
 1. Clone or download this repository
-2. Open `index.html` in a web browser
+2. Open `public/index.html` in a web browser
 3. For better development experience, use a local server:
 
 ```bash
@@ -282,18 +282,19 @@ docker exec graphql-profile-app ps aux
 
 ```
 graphql/
-├── index.html              # Login page
-├── profile.html            # Profile page
-├── css/
-│   └── styles.css          # All styling
-├── js/
-│   ├── config.js           # Configuration (domain endpoints) - NOT in git
-│   ├── config.example.js   # Example configuration template
-│   ├── auth.js             # Authentication utilities
-│   ├── login.js            # Login page logic
-│   ├── graphql.js          # GraphQL query functions
-│   ├── graphs.js           # SVG graph rendering
-│   └── profile.js          # Profile page logic
+├── public/                 # All web-accessible files
+│   ├── index.html          # Login page
+│   ├── profile.html         # Profile page
+│   ├── css/
+│   │   └── styles.css      # All styling
+│   └── js/
+│       ├── config.js       # Configuration (domain endpoints) - NOT in git
+│       ├── config.example.js   # Example configuration template
+│       ├── auth.js         # Authentication utilities
+│       ├── login.js         # Login page logic
+│       ├── graphql.js      # GraphQL query functions
+│       ├── graphs.js       # SVG graph rendering
+│       └── profile.js      # Profile page logic
 ├── .github/
 │   └── workflows/
 │       └── ci-cd.yml       # CI/CD pipeline configuration
@@ -388,14 +389,14 @@ Graphs are interactive and responsive, adapting to container size.
 
 ### Adding New Graphs
 
-1. Add a new function in `graphs.js` (e.g., `renderNewGraph`)
-2. Add a query function in `graphql.js` to fetch the data
-3. Add a button in `profile.html` with `data-graph="new-graph"`
-4. Add a case in `profile.js` `renderGraph()` function
+1. Add a new function in `public/js/graphs.js` (e.g., `renderNewGraph`)
+2. Add a query function in `public/js/graphql.js` to fetch the data
+3. Add a button in `public/profile.html` with `data-graph="new-graph"`
+4. Add a case in `public/js/profile.js` `renderGraph()` function
 
 ### Styling
 
-Edit `styles.css` to customize:
+Edit `public/css/styles.css` to customize:
 - Colors (CSS variables in `:root`)
 - Layout and spacing
 - Animations

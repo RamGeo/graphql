@@ -19,7 +19,7 @@ npm-debug.log*
 .env.local
 
 # Configuration files (personal config - example file is committed)
-js/config.js
+public/js/config.js
 
 # Build files (if you add a build step later)
 dist/
