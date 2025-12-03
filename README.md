@@ -423,3 +423,7 @@ If you encounter CORS errors, ensure:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## 👨‍💻 Authors
+For questions or issues, please contact me on Discord:
+
+[Georgia Marouli](https://discordapp.com/users/1277216244910522371)
