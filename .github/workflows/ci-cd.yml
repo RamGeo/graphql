@@ -2,7 +2,7 @@ name: CI/CD Pipeline
 
 # When to run this workflow
 on:
-  # Run on every push to main branch
+  # Run on every push to main/master branch
   push:
     branches:
       - main
@@ -12,35 +12,75 @@ on:
     branches:
       - main
       - master
+  # Allow manual workflow dispatch
+  workflow_dispatch:
 
 # Jobs to execute
 jobs:
   # Job 1: Build and test Docker image
   build:
-    name: Build Docker Image
-    runs-on: ubuntu-latest  # Gitea: use 'ubuntu-latest' or 'ubuntu-22.04' depending on your runner
+    name: Build and Test Docker Image
+    runs-on: ubuntu-latest
     
     steps:
       # Step 1: Checkout code from repository
       - name: Checkout code
-        uses: actions/checkout@v3  # Use v3 for better Gitea compatibility
+        uses: actions/checkout@v4
       
-      # Step 2: Build Docker image (using direct docker command for Gitea compatibility)
+      # Step 2: Set up Docker Buildx (for advanced Docker features and caching)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      # Step 3: Build Docker image with caching
       - name: Build Docker image
-        run: |
-          docker build -t graphql-profile:latest .
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          tags: graphql-profile:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          load: true  # Load image into local Docker daemon for testing
       
-      # Step 3: Test the image
+      # Step 4: Test the image (verify it starts correctly)
       - name: Test Docker image
         run: |
+          echo "Starting container for testing..."
           docker run -d -p 8080:80 --name test-container graphql-profile:latest
+          
+          echo "Waiting for container to be ready..."
           sleep 5
+          
+          echo "Testing HTTP endpoint..."
           curl -f http://localhost:8080 || exit 1
+          
+          echo "Container is healthy, cleaning up..."
           docker stop test-container
           docker rm test-container
       
-      # Step 4: Show image info
+      # Step 5: Show image information
       - name: Show image info
         run: |
           docker images graphql-profile:latest
+          docker history graphql-profile:latest --no-trunc | head -5
+
+  # Job 2: Security scan (optional but recommended)
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: build
+    continue-on-error: true  # Don't fail the workflow if security scan finds issues
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'table'
+          exit-code: '0'  # Don't fail on vulnerabilities, just report them
 

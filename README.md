@@ -19,14 +19,36 @@ A modern, interactive profile page that displays your school information using G
 
 ## Setup Instructions
 
-### 1. Configure the Domain
+### 1. Configure Your GraphQL Endpoint
 
-Edit `js/config.js` and replace `((DOMAIN))` with your actual domain:
+**Important:** This project is generic and works with any GraphQL API endpoint. You need to configure it with your own API endpoints.
 
-```javascript
-GRAPHQL_ENDPOINT: 'https://your-domain.com/api/graphql-engine/v1/graphql',
-SIGNIN_ENDPOINT: 'https://your-domain.com/api/auth/signin',
-```
+1. **Copy the example configuration:**
+   ```bash
+   cp js/config.example.js js/config.js
+   ```
+
+2. **Edit `js/config.js`** and replace the placeholder values with your actual GraphQL API endpoints:
+
+   ```javascript
+   const CONFIG = {
+       // Replace with your GraphQL API domain
+       DOMAIN: 'https://your-api-domain.com',
+       
+       // Update these with your actual endpoints
+       GRAPHQL_ENDPOINT_DIRECT: 'https://your-api-domain.com/api/graphql-engine/v1/graphql',
+       SIGNIN_ENDPOINT_DIRECT: 'https://your-api-domain.com/api/auth/signin',
+       
+       // Set to false if your API supports CORS directly
+       USE_PROXY: true
+   };
+   ```
+
+3. **CORS Configuration:**
+   - If your API supports CORS: Set `USE_PROXY: false` and use the `*_DIRECT` endpoints
+   - If your API doesn't support CORS: Keep `USE_PROXY: true` (uses a CORS proxy)
+
+**Note:** The `js/config.js` file is gitignored, so your personal configuration won't be committed to the repository.
 
 ### 2. Local Development
 
@@ -265,8 +287,8 @@ graphql/
 ├── css/
 │   └── styles.css          # All styling
 ├── js/
-│   ├── config.js           # Configuration (domain endpoints)
-│   ├── config.example.js   # Example configuration file
+│   ├── config.js           # Configuration (domain endpoints) - NOT in git
+│   ├── config.example.js   # Example configuration template
 │   ├── auth.js             # Authentication utilities
 │   ├── login.js            # Login page logic
 │   ├── graphql.js          # GraphQL query functions
