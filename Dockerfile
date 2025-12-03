@@ -13,7 +13,7 @@ COPY profile.html .
 COPY css/ ./css/
 COPY js/ ./js/
 
-# Copy custom nginx configuration (we'll create this next)
+# Copy custom nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 80 (standard HTTP port)
