@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # Production web application service
+  web:
+    # Build the Docker image from the Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile
+    
+    # Name the container
+    container_name: graphql-profile-app-prod
+    
+    # Map port 80 on host to port 80 in container (standard HTTP)
+    ports:
+      - "80:80"
+    
+    # Always restart container if it stops (production requirement)
+    restart: always
+    
+    # Resource limits for production
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'      # Maximum 1 CPU core
+          memory: 512M     # Maximum 512MB RAM
+        reservations:
+          cpus: '0.5'      # Reserve 0.5 CPU core
+          memory: 256M      # Reserve 256MB RAM
+    
+    # Health check configuration
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s        # Check every 30 seconds
+      timeout: 10s         # Timeout after 10 seconds
+      retries: 3           # Retry 3 times before marking unhealthy
+      start_period: 40s    # Wait 40 seconds before first check
+    
+    # Logging configuration for production
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"    # Rotate logs at 10MB
+        max-file: "3"      # Keep 3 log files
+    
+    # Environment variables (can be overridden with .env file)
+    environment:
+      - NGINX_SERVER_NAME=${NGINX_SERVER_NAME:-localhost}
+      - NGINX_GZIP=${NGINX_GZIP:-true}
+    
+    # Labels for organization and monitoring
+    labels:
+      - "com.graphql-profile.environment=production"
+      - "com.graphql-profile.version=latest"
+
