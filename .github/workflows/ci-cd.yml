@@ -30,7 +30,7 @@ jobs:
         run: |
           docker build -t graphql-profile:latest .
       
-      # Step 3: Test the image (verify it starts correctly)
+      # Step 3: Test the image
       - name: Test Docker image
         run: |
           docker run -d -p 8080:80 --name test-container graphql-profile:latest
