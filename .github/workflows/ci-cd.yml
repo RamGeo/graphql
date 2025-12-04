@@ -156,6 +156,7 @@ jobs:
         run: |
           echo "sha=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
           echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
+          echo "repo_owner_lower=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
       
       # Build and push Docker image to GHCR
       - name: Build and push Docker image
@@ -165,18 +166,14 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner | downcase }}/graphql-profile:${{ steps.meta.outputs.sha }}
-            ghcr.io/${{ github.repository_owner | downcase }}/graphql-profile:${{ steps.meta.outputs.branch }}
-            ghcr.io/${{ github.repository_owner | downcase }}/graphql-profile:latest
+            ghcr.io/${{ steps.meta.outputs.repo_owner_lower }}/graphql-profile:${{ steps.meta.outputs.sha }}
+            ghcr.io/${{ steps.meta.outputs.repo_owner_lower }}/graphql-profile:${{ steps.meta.outputs.branch }}
+            ghcr.io/${{ steps.meta.outputs.repo_owner_lower }}/graphql-profile:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
       
       # Output image location
       - name: Image pushed successfully
         run: |
-          echo "Image pushed to: ghcr.io/${{ github.repository_owner | downcase }}/graphql-profile"
+          echo "Image pushed to: ghcr.io/${{ steps.meta.outputs.repo_owner_lower }}/graphql-profile"
           echo "Tags: ${{ steps.meta.outputs.sha }}, ${{ steps.meta.outputs.branch }}, latest"
-
-
-
-## test push
