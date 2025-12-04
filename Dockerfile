@@ -1,6 +1,9 @@
 # Use nginx Alpine as base image (lightweight web server)
 FROM nginx:alpine
 
+# Update Alpine packages to fix security vulnerabilities (including libpng)
+RUN apk update && apk upgrade --no-cache && rm -rf /var/cache/apk/*
+
 # Set working directory in container
 WORKDIR /usr/share/nginx/html
 
