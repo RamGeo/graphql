@@ -1,0 +1,5 @@
+# Ignore root user misconfiguration for nginx
+# nginx master process requires root privileges to bind to port 80
+# Worker processes run as nginx user (standard nginx security model)
+AVD-DS-0002
+
