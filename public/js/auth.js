@@ -15,9 +15,9 @@ async function signIn(username, password) {
     try {
         const credentials = encodeCredentials(username, password);
         
-        // Add timeout to fetch request
+        // Request timeout (30 seconds)
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+        const timeoutId = setTimeout(() => controller.abort(), 30000);
         
         const response = await fetch(CONFIG.SIGNIN_ENDPOINT, {
             method: 'POST',
@@ -30,22 +30,17 @@ async function signIn(username, password) {
 
         clearTimeout(timeoutId);
 
-        // Log response for debugging
-        console.log('Signin response status:', response.status);
-        console.log('Signin response headers:', response.headers);
-
         if (!response.ok) {
-            // Try to get error message from response
+            // Get error message from response
             let errorMessage = `Authentication failed: ${response.statusText}`;
             try {
                 const errorData = await response.text();
-                console.error('Error response:', errorData);
                 if (errorData) {
                     const parsed = JSON.parse(errorData);
                     errorMessage = parsed.message || parsed.error || errorMessage;
                 }
             } catch (e) {
-                // If response is not JSON, use status text
+                // Response is not JSON, use status text
             }
             
             if (response.status === 401) {
@@ -54,20 +49,18 @@ async function signIn(username, password) {
             throw new Error(errorMessage);
         }
 
-        // Check content type
+        // Parse response (handles JSON or plain text token)
         const contentType = response.headers.get('content-type');
         let data;
         
         if (contentType && contentType.includes('application/json')) {
             data = await response.json();
         } else {
-            // Try to parse as JSON anyway, or get text
             const text = await response.text();
-            console.log('Response text:', text);
             try {
                 data = JSON.parse(text);
             } catch (e) {
-                // If response is just the token as text
+                // Response is plain text token
                 if (text && text.length > 0) {
                     data = { token: text.trim() };
                 } else {
@@ -76,9 +69,7 @@ async function signIn(username, password) {
             }
         }
         
-        console.log('Signin data:', data);
-        
-        // Handle different response formats
+        // Extract token from various response formats
         const token = data.token || data.accessToken || data.jwt || (typeof data === 'string' ? data : null);
         
         if (!token) {
@@ -86,10 +77,8 @@ async function signIn(username, password) {
             throw new Error('No token received from server. Response: ' + JSON.stringify(data));
         }
 
-        // Store token
+        // Store token and user ID
         localStorage.setItem(CONFIG.TOKEN_KEY, token);
-        
-        // Extract and store user ID from JWT
         const userId = extractUserIdFromToken(token);
         if (userId) {
             localStorage.setItem(CONFIG.USER_ID_KEY, userId);
@@ -120,11 +109,10 @@ async function signIn(username, password) {
 function extractUserIdFromToken(token) {
     try {
         const payload = JSON.parse(atob(token.split('.')[1]));
-        console.log('JWT payload:', payload);
-        // Try different possible field names for user ID
+        // Try different field names for user ID
         const userId = payload.userId || payload.id || payload.user_id || payload.sub || null;
         if (userId) {
-            return String(userId); // Return as string, will be parsed to int when needed
+            return String(userId);
         }
         return null;
     } catch (error) {

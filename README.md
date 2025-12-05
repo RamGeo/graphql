@@ -23,51 +23,90 @@ A modern, interactive profile page that displays your school information using G
 
 **Important:** This project is generic and works with any GraphQL API endpoint. You need to configure it with your own API endpoints.
 
+#### Using Docker Compose (Recommended)
+
+1. **Copy the example environment file:**
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Edit `.env`** and update with your actual GraphQL API configuration:
+
+   ```bash
+   # Your GraphQL API domain
+   GRAPHQL_DOMAIN=https://your-api-domain.com
+   
+   # CORS proxy (optional - only if your API doesn't allow CORS)
+   CORS_PROXY=https://corsproxy.io
+   
+   # Use proxy (true/false)
+   USE_PROXY=true
+   ```
+
+3. **The configuration is automatically generated** from environment variables when the container starts. The `config.js` file is generated at runtime from these environment variables.
+
+#### Manual Configuration (Alternative - Without Docker)
+
+If you're not using Docker, you need to manually create the config file:
+
 1. **Copy the example configuration:**
    ```bash
    cp public/js/config.example.js public/js/config.js
    ```
 
-2. **Edit `public/js/config.js`** and replace the placeholder values with your actual GraphQL API endpoints:
-
+2. **Edit `public/js/config.js`** and replace the placeholder values with your actual GraphQL API configuration:
    ```javascript
    const CONFIG = {
-       // Replace with your GraphQL API domain
-       DOMAIN: 'https://your-api-domain.com',
+       // Replace with your GraphQL API domain (just the domain, no path)
+       DOMAIN: 'https://platform.zone01.gr',
        
-       // Update these with your actual endpoints
-       GRAPHQL_ENDPOINT_DIRECT: 'https://your-api-domain.com/api/graphql-engine/v1/graphql',
-       SIGNIN_ENDPOINT_DIRECT: 'https://your-api-domain.com/api/auth/signin',
+       // CORS proxy (optional - only if your API doesn't allow CORS)
+       CORS_PROXY: 'https://corsproxy.io',
        
-       // Set to false if your API supports CORS directly
+       // Direct endpoints (used when USE_PROXY is false)
+       GRAPHQL_ENDPOINT_DIRECT: 'https://platform.zone01.gr/api/graphql-engine/v1/graphql',
+       SIGNIN_ENDPOINT_DIRECT: 'https://platform.zone01.gr/api/auth/signin',
+       
+       // Use proxy (true/false)
        USE_PROXY: true
    };
    ```
 
-3. **CORS Configuration:**
-   - If your API supports CORS: Set `USE_PROXY: false` and use the `*_DIRECT` endpoints
-   - If your API doesn't support CORS: Keep `USE_PROXY: true` (uses a CORS proxy)
-
 **Note:** The `public/js/config.js` file is gitignored, so your personal configuration won't be committed to the repository.
 
-### 2. Local Development
+### 2. Running Without Docker (Local Development)
 
-1. Clone or download this repository
-2. Open `public/index.html` in a web browser
-3. For better development experience, use a local server:
+To run the app locally without Docker:
 
-```bash
-# Using Python 3
-python -m http.server 8000
+1. **Create the config file** (see Manual Configuration above)
 
-# Using Node.js (with http-server)
-npx http-server
+2. **Start a local web server** from the `public` directory:
 
-# Using PHP
-php -S localhost:8000
-```
+   ```bash
+   # Navigate to the public directory
+   cd public
+   
+   # Option 1: Using Python 3
+   python3 -m http.server 8000
+   
+   # Option 2: Using Node.js (requires http-server package)
+   npx http-server -p 8000
+   
+   # Option 3: Using PHP
+   php -S localhost:8000
+   
+   # Option 4: Using Python 2 (if Python 3 not available)
+   python -m SimpleHTTPServer 8000
+   ```
 
-Then navigate to `http://localhost:8000`
+3. **Open your browser** and navigate to:
+   ```
+   http://localhost:8000
+   ```
+
+**Important:** You must use a local web server (not just open the HTML file directly) because:
+- Modern browsers block CORS requests from `file://` URLs
+- The app needs to make HTTP requests to your GraphQL API
 
 ### 3. Hosting
 
@@ -99,7 +138,11 @@ This project includes a complete DevOps setup with Docker, CI/CD, and deployment
 ### Quick Start with Docker
 
 ```bash
-# Build and start the application
+# 1. Copy the example environment file and configure it
+cp .env.example .env
+# Edit .env with your GraphQL API domain and settings
+
+# 2. Build and start the application
 make up
 
 # Or using docker-compose directly
@@ -113,6 +156,8 @@ make down
 ```
 
 The application will be available at `http://localhost:8080`
+
+**Note:** The configuration (`config.js`) is automatically generated from environment variables in your `.env` file when the container starts. No need to manually create or edit `config.js` when using Docker.
 
 ### DevOps Files Overview
 

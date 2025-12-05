@@ -7,9 +7,9 @@ async function executeQuery(query, variables = {}) {
     try {
         const headers = getAuthHeader();
         
-        // Add timeout to fetch request
+        // Request timeout (30 seconds)
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+        const timeoutId = setTimeout(() => controller.abort(), 30000);
         
         const response = await fetch(CONFIG.GRAPHQL_ENDPOINT, {
             method: 'POST',
@@ -25,12 +25,11 @@ async function executeQuery(query, variables = {}) {
 
         if (!response.ok) {
             if (response.status === 401) {
-                // Token expired or invalid
                 signOut();
                 throw new Error('Authentication expired. Please login again.');
             }
             if (response.status === 403) {
-                throw new Error('Access forbidden. You may not have permission to access this data.');
+                throw new Error('Access forbidden.');
             }
             if (response.status >= 500) {
                 throw new Error('Server error. Please try again later.');

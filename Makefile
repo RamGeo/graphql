@@ -27,7 +27,14 @@ up: ## Start the application using docker-compose
 # Stop container using docker-compose
 down: ## Stop the application using docker-compose
 	@echo "Stopping application..."
-	docker-compose down
+	@docker-compose down 2>/dev/null || true
+	@echo "Application stopped"
+
+# Remove containers and volumes (keeps images)
+remove: ## Remove containers, networks, and volumes (keeps images)
+	@echo "Removing containers and volumes..."
+	@docker-compose down -v 2>/dev/null || true
+	@echo "Containers and volumes removed"
 
 # View logs
 logs: ## View application logs
@@ -41,8 +48,8 @@ rebuild: ## Rebuild image and restart container
 # Clean up - remove containers, images, and volumes
 clean: ## Remove containers, images, and volumes
 	@echo "Cleaning up..."
-	docker-compose down -v
-	docker rmi $(IMAGE_NAME):latest 2>/dev/null || true
+	@docker-compose down -v 2>/dev/null || true
+	@docker rmi $(IMAGE_NAME):latest 2>/dev/null || true
 	@echo "Cleanup complete"
 
 # Run container directly (without docker-compose)
@@ -70,5 +77,5 @@ status: ## Show container status
 shell: ## Open a shell in the running container
 	docker exec -it $(CONTAINER_NAME) sh
 
-.PHONY: help build up down logs rebuild clean run stop test status shell
+.PHONY: help build up down remove logs rebuild clean run stop test status shell
 

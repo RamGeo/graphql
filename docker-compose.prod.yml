@@ -1,54 +1,52 @@
 version: '3.8'
 
 services:
-  # Production web application service
   web:
-    # Build the Docker image from the Dockerfile
     build:
       context: .
       dockerfile: Dockerfile
     
-    # Name the container
     container_name: graphql-profile-app-prod
     
-    # Map port 80 on host to port 80 in container (standard HTTP)
+    # Map port 80 (host) to port 80 (container)
     ports:
       - "80:80"
     
-    # Always restart container if it stops (production requirement)
     restart: always
     
-    # Resource limits for production
+    # Resource limits
     deploy:
       resources:
         limits:
-          cpus: '1.0'      # Maximum 1 CPU core
-          memory: 512M     # Maximum 512MB RAM
+          cpus: '1.0'
+          memory: 512M
         reservations:
-          cpus: '0.5'      # Reserve 0.5 CPU core
-          memory: 256M      # Reserve 256MB RAM
+          cpus: '0.5'
+          memory: 256M
     
-    # Health check configuration
+    # Health check
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
-      interval: 30s        # Check every 30 seconds
-      timeout: 10s         # Timeout after 10 seconds
-      retries: 3           # Retry 3 times before marking unhealthy
-      start_period: 40s    # Wait 40 seconds before first check
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     
-    # Logging configuration for production
+    # Logging configuration
     logging:
       driver: "json-file"
       options:
-        max-size: "10m"    # Rotate logs at 10MB
-        max-file: "3"      # Keep 3 log files
+        max-size: "10m"
+        max-file: "3"
     
-    # Environment variables (can be overridden with .env file)
+    # Environment variables (can be set in .env file)
     environment:
       - NGINX_SERVER_NAME=${NGINX_SERVER_NAME:-localhost}
       - NGINX_GZIP=${NGINX_GZIP:-true}
+      - GRAPHQL_DOMAIN=${GRAPHQL_DOMAIN:-https://your-domain.com}
+      - CORS_PROXY=${CORS_PROXY:-https://corsproxy.io}
+      - USE_PROXY=${USE_PROXY:-true}
     
-    # Labels for organization and monitoring
     labels:
       - "com.graphql-profile.environment=production"
       - "com.graphql-profile.version=latest"

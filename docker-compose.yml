@@ -1,24 +1,26 @@
 version: '3.8'
 
 services:
-  # Main web application service
   web:
-    # Build the Docker image from the Dockerfile in current directory
     build:
       context: .
       dockerfile: Dockerfile
     
-    # Name the container
     container_name: graphql-profile-app
     
-    # Map port 8080 on your machine to port 80 in container
+    # Map port 8080 (host) to port 80 (container)
     ports:
       - "8080:80"
     
-    # Restart policy: automatically restart if container stops
     restart: unless-stopped
     
-    # Optional: Add health check to monitor container status
+    # Environment variables (can be set in .env file)
+    environment:
+      - GRAPHQL_DOMAIN=${GRAPHQL_DOMAIN:-https://your-domain.com}
+      - CORS_PROXY=${CORS_PROXY:-https://corsproxy.io}
+      - USE_PROXY=${USE_PROXY:-true}
+    
+    # Health check
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
       interval: 30s
