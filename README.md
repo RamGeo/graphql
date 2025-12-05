@@ -32,16 +32,19 @@ A modern, interactive profile page that displays your school information using G
 
 2. **Edit `.env`** and update with your actual GraphQL API configuration:
 
-   ```bash
-   # Your GraphQL API domain
-   GRAPHQL_DOMAIN=https://your-api-domain.com
-   
-   # CORS proxy (optional - only if your API doesn't allow CORS)
-   CORS_PROXY=https://corsproxy.io
-   
-   # Use proxy (true/false)
-   USE_PROXY=true
-   ```
+```bash
+# Your GraphQL API domain (required)
+ # Example: https://your-domain.com
+GRAPHQL_DOMAIN=https://your-domain.com
+
+# CORS proxy URL (optional - only needed if your API doesn't allow CORS)
+# Leave as is if you don't need a proxy, or use a CORS proxy service
+CORS_PROXY=https://corsproxy.io
+
+# Use proxy (true/false)
+# Set to false if your API supports CORS directly
+USE_PROXY=true
+```
 
 3. **The configuration is automatically generated** from environment variables when the container starts. The `config.js` file is generated at runtime from these environment variables.
 
