@@ -34,7 +34,7 @@ A modern, interactive profile page that displays your school information using G
 
 ```bash
 # Your GraphQL API domain (required)
- # Example: https://your-domain.com
+# Example: https://your-domain.com
 GRAPHQL_DOMAIN=https://your-domain.com
 
 # CORS proxy URL (optional - only needed if your API doesn't allow CORS)
