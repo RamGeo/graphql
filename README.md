@@ -57,19 +57,33 @@ If you're not using Docker, you need to manually create the config file:
 2. **Edit `public/js/config.js`** and replace the placeholder values with your actual GraphQL API configuration:
    ```javascript
    const CONFIG = {
-       // Replace with your GraphQL API domain (just the domain, no path)
-       DOMAIN: 'https://platform.zone01.gr',
-       
-       // CORS proxy (optional - only if your API doesn't allow CORS)
-       CORS_PROXY: 'https://corsproxy.io',
-       
-       // Direct endpoints (used when USE_PROXY is false)
-       GRAPHQL_ENDPOINT_DIRECT: 'https://platform.zone01.gr/api/graphql-engine/v1/graphql',
-       SIGNIN_ENDPOINT_DIRECT: 'https://platform.zone01.gr/api/auth/signin',
-       
-       // Use proxy (true/false)
-       USE_PROXY: true
-   };
+    // Base domain (e.g., 'https://your-domain.com')
+    DOMAIN: 'https://your-domain.com',
+    
+    // CORS proxy URL (only needed if your API doesn't allow CORS)
+    CORS_PROXY: 'https://corsproxy.io',
+    
+    // GraphQL endpoint with proxy
+    get GRAPHQL_ENDPOINT() {
+        return `${this.CORS_PROXY}/?${this.DOMAIN}/api/graphql-engine/v1/graphql`;
+    },
+    
+    // Signin endpoint with proxy
+    get SIGNIN_ENDPOINT() {
+        return `${this.CORS_PROXY}/?${this.DOMAIN}/api/auth/signin`;
+    },
+    
+    // Direct endpoints (used when USE_PROXY is false)
+    GRAPHQL_ENDPOINT_DIRECT: 'https://your-domain.com/api/graphql-engine/v1/graphql',
+    SIGNIN_ENDPOINT_DIRECT: 'https://your-domain.com/api/auth/signin',
+    
+    // localStorage keys
+    TOKEN_KEY: 'graphql_profile_token',
+    USER_ID_KEY: 'graphql_profile_user_id',
+    
+    // Use proxy (set to false if your API supports CORS directly)
+    USE_PROXY: true
+    };
    ```
 
 **Note:** The `public/js/config.js` file is gitignored, so your personal configuration won't be committed to the repository.
